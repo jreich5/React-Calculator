@@ -4,7 +4,7 @@ import { IButtonProps } from "./interfaces.ts";
 function Buttons({ buttonsData }: { buttonsData: IButtonProps[] }) {
   console.log(buttonsData);
   return (
-    <section>
+    <section className="buttons">
       {buttonsData.map((buttonData: IButtonProps) => {
         return <Button key={String(buttonData.name)} {...buttonData} />;
       })}

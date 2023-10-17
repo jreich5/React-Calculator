@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Roboto", sans-serif;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+main {
+  background-color: #525253;
+  color: white;
+  width: 235px;
+  border-left: 1px solid #525253;
+  border-radius: 10px;
+  -webkit-box-shadow: -2px 15px 30px 1px rgba(0, 0, 0, 0.34);
+  -moz-box-shadow: -2px 15px 30px 1px rgba(0, 0, 0, 0.34);
+  box-shadow: -2px 15px 30px 1px rgba(0, 0, 0, 0.34);
+}
+
+.display-text {
+  font-size: 36px;
+  text-align: end;
+  font-weight: 200;
+  margin: 0;
+  padding: 30px 10px 5px 10px;
+}
+button:nth-child(17) {
+  border-radius: 0 0 0 10px;
+}
+
+button:nth-child(19) {
+  border-radius: 0 0 10px 0;
+}
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: 243px;
+}
+.buttons > button {
+  color: white;
+  font-size: 23px;
+  border: none;
+  border-bottom: 1px solid #525253;
+  border-right: 1px solid #525253;
+}
+
+button[data-name="Zero Button"] {
+  grid-column: span 2;
+}
+
+button:active {
+  filter: brightness(150%);
+}
+.bg-orange {
+  background-color: #f2a33c;
+}
+
+.bg-light-grey {
+  background-color: #7d7d7e;
+}
+
+.bg-dark-grey {
+  background-color: #636364;
+}
