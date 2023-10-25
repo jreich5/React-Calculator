@@ -2,69 +2,121 @@ import { useState } from "react";
 import Display from "./Display";
 import Buttons from "./Buttons.tsx";
 
-function Calculator() {
-  const [total, setTotal] = useState(25);
-  const [operand1, setOperand1] = useState(0);
-  const [operand2, setOperand2] = useState(0);
-  const [dataBeingDisplayed, setDataBeingDisplayed] = useState("total");
+export const digitIsZero = (digit: string): boolean => {
+  return digit === "0";
+};
 
-  const returnOutput = () => {
-    switch (dataBeingDisplayed) {
-      case "total":
-        return total;
-      case "operand1":
-        return operand1;
-      case "operand2":
-        return operand2;
-    }
-  };
+export const hasDecimal = (value: string): boolean => value.indexOf(".") !== -1;
+
+export const formatNumberOutput = (value: string): string => {
+  if (hasDecimal(value) && value.endsWith("0")) {
+    return value;
+  }
+  if (value.length > 1 && value.startsWith("0")) {
+    return String(Number(value));
+  }
+  return String(Number(value));
+};
+
+function Calculator() {
+  const [displayNumber, setDisplayNumber] = useState("0");
+  const [operand1, setOperand1] = useState("0");
+  const [operator, setOperator] = useState("");
+  const [operand2, setOperand2] = useState("0");
+  const [dataBeingDisplayed, setDataBeingDisplayed] = useState("o1");
 
   const clear = () => {
-    setTotal(0);
-    setOperand1(0);
-    setOperand2(0);
-    setDataBeingDisplayed("total");
+    setOperand1("0");
+    setOperator("");
+    setOperand2("0");
+    setDataBeingDisplayed("o1");
+    setDisplayNumber("0");
   };
 
   const changeSign = () => {
-    console.log("change sign");
-    switch (dataBeingDisplayed) {
-      case "total":
-        setTotal(total * -1);
-        break;
-      case "operand1":
-        setOperand1(operand1 * -1);
-        break;
-      case "operand2":
-        setOperand2(operand2 * -1);
+    let value;
+    if (dataBeingDisplayed === "o1") {
+      value = String(-1 * Number(operand1));
+      setOperand1(value);
+    } else {
+      value = String(-1 * Number(operand2));
+      setOperand2(value);
     }
+    setDisplayNumber(value);
   };
 
-  const containsDecimal = (number: number) => {
-    return String(number).split(".").length == 2;
+  const containsDecimal = (value: string) => {
+    return value.indexOf(".") !== -1;
   };
 
   const addDecimal = () => {
-    console.log("adding decimal...");
-    // switch (dataBeingDisplayed) {
-    //   case "total":
-    //     setTotal(total * -1);
-    //     break;
-    //   case "operand1":
-    //     setOperand1(operand1 * -1);
-    //     break;
-    //   case "operand2":
-    //     setOperand2(operand2 * -1);
-    // }
-  };
-
-  const calculatePercent = () => console.log("calculatePercent");
-  const doOperation = (operator: string) => {
-    switch (operator) {
+    if (!containsDecimal(displayNumber)) {
+      if (dataBeingDisplayed === "o1") {
+        const withDecimal = String(operand1) + ".";
+        setDisplayNumber(withDecimal);
+        setOperand1(withDecimal);
+      } else {
+        const withDecimal = String(operand2) + ".";
+        setDisplayNumber(String(operand2) + ".");
+        setOperand2(withDecimal);
+      }
     }
   };
-  const calculateValue = () => console.log("calculateValue");
-  const processDigit = () => console.log("processDigit");
+
+  const calculatePercent = () => {
+    let value;
+    if (dataBeingDisplayed === "o1") {
+      value = String(Number(operand1) / 100);
+      setOperand1(value);
+    } else {
+      value = String(Number(operand2) / 100);
+      setOperand2(value);
+    }
+    setDisplayNumber(value);
+  };
+
+  const doOperation = (operator: string) => {
+    if (dataBeingDisplayed === "o1") {
+      setOperator(operator);
+      setOperand2("0");
+    }
+  };
+
+  const calculateValue = () => {
+    const o1Num = Number(operand1);
+    const o2Num = Number(operand2);
+    const math = {
+      "+": (): number => o1Num + o2Num,
+      "-": (): number => o1Num - o2Num,
+      "*": (): number => o1Num * o2Num,
+      "/": (): number => o1Num / o2Num,
+    };
+    const value = math[operator]();
+    setOperand1(String(value));
+    setDataBeingDisplayed("o1");
+    setDisplayNumber(String(value));
+  };
+
+  // if (digitIsZero && hasDecimal) {
+
+  // allow the zero
+  // } else {
+  // don't allow it
+  // }
+
+  const processDigit = (number: number) => {
+    if (operator === "") {
+      setDataBeingDisplayed("o1");
+      const newValue = formatNumberOutput(`${operand1}${number}`);
+      setOperand1(newValue);
+      setDisplayNumber(newValue);
+    } else {
+      setDataBeingDisplayed("o2");
+      const newValue = formatNumberOutput(`${operand2}${number}`);
+      setOperand2(newValue);
+      setDisplayNumber(newValue);
+    }
+  };
 
   const buttonsData = [
     {
@@ -111,7 +163,7 @@ function Calculator() {
     },
     {
       name: "Multiply Button",
-      displayText: "x",
+      displayText: "*",
       classes: ["bg-orange"],
       listener: doOperation,
     },
@@ -184,10 +236,16 @@ function Calculator() {
   ];
 
   return (
-    <main>
-      <Display displayText={String(returnOutput())} />
-      <Buttons buttonsData={buttonsData} />
-    </main>
+    <>
+      {/* <h1>Operand1: {operand1}</h1>
+      <h1>Operator: {operator}</h1>
+      <h1>Operand2: {operand2}</h1>
+      <h1>Data displayed {dataBeingDisplayed}</h1> */}
+      <main>
+        <Display displayText={displayNumber} />
+        <Buttons buttonsData={buttonsData} />
+      </main>
+    </>
   );
 }
 
